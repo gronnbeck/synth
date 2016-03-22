@@ -1,6 +1,10 @@
-package synth
+package jobs
 
-import "time"
+import (
+	"time"
+
+	"github.com/gronnbeck/synthetic-2/synth"
+)
 
 // Schedule contains all jobs scheduled
 type Schedule struct {
@@ -9,6 +13,6 @@ type Schedule struct {
 
 // JobSchedule describes how often a job should be repeated
 type JobSchedule struct {
-	Job         Job
+	Job         synth.Job
 	RepeatEvery time.Duration
 }

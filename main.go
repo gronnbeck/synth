@@ -12,9 +12,9 @@ func main() {
 
 	events := make(chan synth.Event)
 
-	schedule := synth.Schedule{
-		Jobs: []synth.JobSchedule{
-			synth.JobSchedule{
+	schedule := jobs.Schedule{
+		Jobs: []jobs.JobSchedule{
+			jobs.JobSchedule{
 				Job:         jobs.NewPingURL("https://google.com", "Google.com", events),
 				RepeatEvery: 5 * time.Second,
 			},
