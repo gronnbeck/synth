@@ -3,7 +3,6 @@ package jobs
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/gronnbeck/synthetic-2/synth"
 )
@@ -13,18 +12,15 @@ import (
 type PingURL struct {
 	url         string
 	application string
-	schedule    time.Duration
 	events      chan synth.Event
 }
 
 // NewPingURL returns a PingURL struct
-func NewPingURL(url string, application string,
-	schedule time.Duration, events chan synth.Event) PingURL {
+func NewPingURL(url string, application string, events chan synth.Event) PingURL {
 	return PingURL{
 		url:         url,
 		application: application,
 		events:      events,
-		schedule:    schedule,
 	}
 }
 
@@ -66,8 +62,4 @@ func (p PingURL) Run() error {
 		Tags:        []string{"ping-url"},
 	}
 	return nil
-}
-
-func (p PingURL) Schedule() time.Duration {
-	return p.schedule
 }

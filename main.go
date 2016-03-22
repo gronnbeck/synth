@@ -11,16 +11,22 @@ import (
 func main() {
 
 	events := make(chan synth.Event)
-	jobs := []synth.Job{
-		jobs.NewPingURL("https://google.com", "Google.com", 5*time.Second, events),
+
+	schedule := synth.Schedule{
+		Jobs: []synth.JobSchedule{
+			synth.JobSchedule{
+				Job:         jobs.NewPingURL("https://google.com", "Google.com", events),
+				RepeatEvery: 5 * time.Second,
+			},
+		},
 	}
 
 	go func() {
-		for _, job := range jobs {
-			ticker := time.NewTicker(job.Schedule())
+		for _, scheduledJob := range schedule.Jobs {
+			ticker := time.NewTicker(scheduledJob.RepeatEvery)
 			for range ticker.C {
 				log.Println("Hello world!")
-				job.Run()
+				scheduledJob.Job.Run()
 			}
 		}
 	}()

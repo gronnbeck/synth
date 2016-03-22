@@ -17,7 +17,7 @@ func testTools(code int, body string) (*httptest.Server, PingURL, chan synth.Eve
 	}))
 
 	c := make(chan synth.Event)
-	job := NewPingURL(server.URL, "Ping Test", 3, c)
+	job := NewPingURL(server.URL, "Ping Test", c)
 
 	return server, job, c
 }
