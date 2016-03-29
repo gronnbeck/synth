@@ -30,6 +30,40 @@ func Test_Schedule_Successful(t *testing.T) {
 	}
 }
 
+func Test_Multiple_ScheduleJob(t *testing.T) {
+	c := make(chan synth.Event)
+
+	schedule := Schedule{
+		Jobs: []JobSchedule{
+			JobSchedule{
+				Job:         MockJob{C: c},
+				RepeatEvery: 3 * time.Second,
+			},
+			JobSchedule{
+				Job:         MockJob{C: c},
+				RepeatEvery: 3 * time.Second,
+			},
+		},
+	}
+
+	RunSchedule(schedule)
+
+	select {
+	case <-c:
+		t.Log("OK")
+		select {
+		case <-c:
+			t.Log("OK")
+		case <-time.After(8 * time.Second):
+			t.Log("Schedule runner timed-out")
+			t.Fail()
+		}
+	case <-time.After(8 * time.Second):
+		t.Log("Schedule runner timed-out")
+		t.Fail()
+	}
+}
+
 type MockJob struct {
 	C chan synth.Event
 }
