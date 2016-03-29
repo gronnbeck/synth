@@ -21,15 +21,7 @@ func main() {
 		},
 	}
 
-	go func() {
-		for _, scheduledJob := range schedule.Jobs {
-			ticker := time.NewTicker(scheduledJob.RepeatEvery)
-			for range ticker.C {
-				log.Println("Hello world!")
-				scheduledJob.Job.Run()
-			}
-		}
-	}()
+	jobs.RunSchedule(schedule)
 
 	for e := range events {
 		log.Println("Oh, Hi!")
