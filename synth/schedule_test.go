@@ -1,14 +1,12 @@
-package jobs
+package synth
 
 import (
 	"testing"
 	"time"
-
-	"github.com/gronnbeck/synthetic-2/synth"
 )
 
 func Test_Schedule_Successful(t *testing.T) {
-	c := make(chan synth.Event)
+	c := make(chan Event)
 
 	schedule := Schedule{
 		Jobs: []JobSchedule{
@@ -31,7 +29,7 @@ func Test_Schedule_Successful(t *testing.T) {
 }
 
 func Test_Multiple_ScheduleJob(t *testing.T) {
-	c := make(chan synth.Event)
+	c := make(chan Event)
 
 	schedule := Schedule{
 		Jobs: []JobSchedule{
@@ -65,10 +63,10 @@ func Test_Multiple_ScheduleJob(t *testing.T) {
 }
 
 type MockJob struct {
-	C chan synth.Event
+	C chan Event
 }
 
 func (m MockJob) Run() error {
-	m.C <- synth.Event{}
+	m.C <- Event{}
 	return nil
 }

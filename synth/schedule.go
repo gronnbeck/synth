@@ -1,9 +1,7 @@
-package jobs
+package synth
 
 import (
 	"time"
-
-	"github.com/gronnbeck/synthetic-2/synth"
 )
 
 // Schedule contains all jobs scheduled
@@ -13,7 +11,7 @@ type Schedule struct {
 
 // JobSchedule describes how often a job should be repeated
 type JobSchedule struct {
-	Job         synth.Job
+	Job         Job
 	RepeatEvery time.Duration
 }
 
@@ -22,7 +20,7 @@ type JobSchedule struct {
 func RunSchedule(schedule Schedule) {
 	for _, scheduledJob := range schedule.Jobs {
 		ticker := time.NewTicker(scheduledJob.RepeatEvery)
-		go func(job synth.Job, s <-chan time.Time) {
+		go func(job Job, s <-chan time.Time) {
 			for range s {
 				job.Run()
 			}
