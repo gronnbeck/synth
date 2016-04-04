@@ -60,7 +60,7 @@ func Test_Request_Response_with_URL(t *testing.T) {
 		Response: ExpectedResponse{StatusCode: 200},
 	}
 
-	success, err, httpResp := action.run()
+	success, httpResp, err := action.run()
 
 	if err != nil {
 		t.Log("Unexpected failure with running the request")

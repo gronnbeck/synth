@@ -65,15 +65,15 @@ func (req Request) run() (*http.Response, error) {
 	return resp, nil
 }
 
-func (a Action) run() (bool, error, *http.Response) {
+func (a Action) run() (bool, *http.Response, error) {
 	resp, err := a.Request.run()
 	if err != nil {
-		return false, err, nil
+		return false, nil, err
 	}
 
 	if resp.StatusCode != a.Response.StatusCode {
-		return false, nil, resp
+		return false, resp, nil
 	}
 
-	return true, nil, resp
+	return true, resp, nil
 }
