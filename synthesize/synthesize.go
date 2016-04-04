@@ -3,6 +3,8 @@ package synthesize
 import (
 	"io/ioutil"
 	"net/http"
+	"reflect"
+	"sort"
 
 	"gopkg.in/yaml.v2"
 )
@@ -30,6 +32,7 @@ type Request struct {
 
 type ExpectedResponse struct {
 	StatusCode int
+	Body       *map[string]interface{}
 }
 
 func loadJobFile(filename string) (*Job, error) {
@@ -76,4 +79,50 @@ func (a Action) run() (bool, *http.Response, error) {
 	}
 
 	return true, resp, nil
+}
+
+func leftContains(left map[string]interface{}, right map[string]interface{}) bool {
+	isLeftContains := true
+	for k, v := range left {
+
+		if reflect.TypeOf(v) != reflect.TypeOf(right[k]) {
+			return false
+		}
+
+		switch v.(type) {
+		case map[string]interface{}:
+			isLeftContains = isLeftContains &&
+				leftContains(v.(map[string]interface{}), right[k].(map[string]interface{}))
+		case []string:
+			isLeftContains = isLeftContains &&
+				testEq(v.([]string), right[k].([]string))
+		default:
+			isLeftContains = isLeftContains && v == right[k]
+		}
+	}
+	return isLeftContains
+}
+
+func testEq(a, b []string) bool {
+	sort.Strings(a)
+	sort.Strings(b)
+	if a == nil && b == nil {
+		return true
+	}
+
+	if a == nil || b == nil {
+		return false
+	}
+
+	if len(a) != len(b) {
+		return false
+	}
+
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+
+	return true
 }

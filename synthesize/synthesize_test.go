@@ -82,3 +82,95 @@ func testTools(code int, body string) *httptest.Server {
 	}))
 	return server
 }
+
+func Test_leftContains_simple_true(t *testing.T) {
+	l := map[string]interface{}{}
+	l["test"] = "test"
+
+	r := map[string]interface{}{}
+	r["test"] = "test"
+	r["ignore"] = "ignore"
+
+	contains := leftContains(l, r)
+
+	if !contains {
+		t.Log("Should return true but returned false")
+		t.Fail()
+	}
+}
+
+func Test_leftContains_simple_false(t *testing.T) {
+	l := map[string]interface{}{}
+	l["tester"] = "test"
+
+	r := map[string]interface{}{}
+	r["test"] = "test"
+	r["ignore"] = "ignore"
+
+	contains := leftContains(l, r)
+
+	if contains {
+		t.Log("Should return false but returned true")
+		t.Fail()
+	}
+}
+
+func Test_leftContains_complex_true(t *testing.T) {
+	l := map[string]interface{}{}
+	l["test"] = map[string]interface{}{
+		"test": "test",
+	}
+
+	r := map[string]interface{}{}
+	r["test"] = map[string]interface{}{
+		"test": "test",
+	}
+	r["ignore"] = "ignore"
+
+	contains := leftContains(l, r)
+
+	if !contains {
+		t.Log("Should return true but returned false")
+		t.Fail()
+	}
+}
+
+func Test_leftContains_complex_false(t *testing.T) {
+	l := map[string]interface{}{}
+	l["test"] = map[string]interface{}{
+		"test": "test",
+	}
+
+	r := map[string]interface{}{}
+	r["test"] = "test"
+	r["ignore"] = "ignore"
+
+	contains := leftContains(l, r)
+
+	if contains {
+		t.Log("Should return false but returned true")
+		t.Fail()
+	}
+}
+
+func Test_leftContains_array_true(t *testing.T) {
+	l := map[string]interface{}{}
+	l["test"] = []string{
+		"hello",
+		"world",
+	}
+
+	r := map[string]interface{}{}
+	r["test"] = []string{
+		"world",
+		"hello",
+	}
+	r["ignore"] = "ignore"
+
+	contains := leftContains(l, r)
+
+	if !contains {
+		t.Log("Expected array to work but failed")
+		t.Fail()
+	}
+}
