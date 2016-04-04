@@ -7,7 +7,13 @@ import (
 )
 
 type Job struct {
-	Name string
+	Name     string
+	Schedule Schedule
+}
+
+type Schedule struct {
+	Duration float32
+	Unit     string
 }
 
 func loadJobFile(filename string) (*Job, error) {
