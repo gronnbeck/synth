@@ -174,3 +174,27 @@ func Test_leftContains_array_true(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func Test_leftContains_complex_array(t *testing.T) {
+	l := map[string]interface{}{}
+	l["test"] = []map[string]interface{}{
+		map[string]interface{}{
+			"test": "test",
+		},
+	}
+
+	r := map[string]interface{}{}
+	r["test"] = []map[string]interface{}{
+		map[string]interface{}{
+			"test": "test",
+		},
+	}
+	r["ignore"] = "ignore"
+
+	contains := leftContains(l, r)
+
+	if !contains {
+		t.Log("Expected complex arrays to work but failed")
+		t.Fail()
+	}
+}

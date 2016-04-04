@@ -95,7 +95,11 @@ func leftContains(left map[string]interface{}, right map[string]interface{}) boo
 				leftContains(v.(map[string]interface{}), right[k].(map[string]interface{}))
 		case []string:
 			isLeftContains = isLeftContains &&
-				testEq(v.([]string), right[k].([]string))
+				testEqString(v.([]string), right[k].([]string))
+		case []map[string]interface{}:
+			isLeftContains = isLeftContains &&
+				testEqComplex(v.([]map[string]interface{}),
+					right[k].([]map[string]interface{}))
 		default:
 			isLeftContains = isLeftContains && v == right[k]
 		}
@@ -103,7 +107,7 @@ func leftContains(left map[string]interface{}, right map[string]interface{}) boo
 	return isLeftContains
 }
 
-func testEq(a, b []string) bool {
+func testEqString(a, b []string) bool {
 	sort.Strings(a)
 	sort.Strings(b)
 	if a == nil && b == nil {
@@ -120,6 +124,29 @@ func testEq(a, b []string) bool {
 
 	for i := range a {
 		if a[i] != b[i] {
+			return false
+		}
+	}
+
+	return true
+}
+
+func testEqComplex(a, b []map[string]interface{}) bool {
+	if a == nil && b == nil {
+		return true
+	}
+
+	if a == nil || b == nil {
+		return false
+	}
+
+	if len(a) != len(b) {
+		return false
+	}
+
+	for i := range a {
+		c := leftContains(a[i], b[i])
+		if !c {
 			return false
 		}
 	}
