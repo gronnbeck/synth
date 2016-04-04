@@ -1,6 +1,11 @@
 package synthesize
 
-import "testing"
+import (
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+)
 
 var jobYAML = `
 name: Test
@@ -45,4 +50,35 @@ func Test_Should_Load_YAML_Job(t *testing.T) {
 	if job.Actions[0].Response.StatusCode != 200 {
 		t.Logf("Expected request type to be GET but was %v", job.Actions[0].Response.StatusCode)
 	}
+}
+
+func Test_Request_Response_with_URL(t *testing.T) {
+	server := testTools(200, "")
+
+	action := Action{
+		Request:  Request{URL: server.URL},
+		Response: Response{StatusCode: 200},
+	}
+
+	success, err, httpResp := action.run()
+
+	if err != nil {
+		t.Log("Unexpected failure with running the request")
+		t.Fail()
+	}
+
+	if !success {
+		t.Log("Expected actions to succeed but did not")
+		t.Logf("Expected status code to be 200 but was %v", httpResp.StatusCode)
+		t.Fail()
+	}
+}
+
+func testTools(code int, body string) *httptest.Server {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(code)
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintln(w, body)
+	}))
+	return server
 }

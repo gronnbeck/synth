@@ -2,6 +2,7 @@ package synthesize
 
 import (
 	"io/ioutil"
+	"net/http"
 
 	"gopkg.in/yaml.v2"
 )
@@ -24,6 +25,7 @@ type Action struct {
 
 type Request struct {
 	Type string
+	URL  string
 }
 
 type Response struct {
@@ -52,4 +54,26 @@ func loadJobYaml(byt []byte) (*Job, error) {
 	}
 
 	return &job, nil
+}
+
+func (req Request) run() (*http.Response, error) {
+	resp, err := http.Get(req.URL)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (a Action) run() (bool, error, *http.Response) {
+	resp, err := a.Request.run()
+	if err != nil {
+		return false, err, nil
+	}
+
+	if resp.StatusCode != a.Response.StatusCode {
+		return false, nil, resp
+	}
+
+	return true, nil, resp
 }
