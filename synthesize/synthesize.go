@@ -20,7 +20,7 @@ type Schedule struct {
 
 type Action struct {
 	Request  Request
-	Response Response
+	Response ExpectedResponse
 }
 
 type Request struct {
@@ -28,7 +28,7 @@ type Request struct {
 	URL  string
 }
 
-type Response struct {
+type ExpectedResponse struct {
 	StatusCode int
 }
 

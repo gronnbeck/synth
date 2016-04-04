@@ -57,7 +57,7 @@ func Test_Request_Response_with_URL(t *testing.T) {
 
 	action := Action{
 		Request:  Request{URL: server.URL},
-		Response: Response{StatusCode: 200},
+		Response: ExpectedResponse{StatusCode: 200},
 	}
 
 	success, err, httpResp := action.run()
