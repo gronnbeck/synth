@@ -9,11 +9,25 @@ import (
 type Job struct {
 	Name     string
 	Schedule Schedule
+	Actions  []Action
 }
 
 type Schedule struct {
 	Duration float32
 	Unit     string
+}
+
+type Action struct {
+	Request  Request
+	Response Response
+}
+
+type Request struct {
+	Type string
+}
+
+type Response struct {
+	StatusCode int
 }
 
 func loadJobFile(filename string) (*Job, error) {
