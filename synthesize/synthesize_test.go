@@ -153,7 +153,7 @@ func Test_leftContains_complex_false(t *testing.T) {
 	}
 }
 
-func Test_leftContains_array_true(t *testing.T) {
+func Test_leftContains_string_array_true(t *testing.T) {
 	l := map[string]interface{}{}
 	l["test"] = []string{
 		"hello",
@@ -164,6 +164,28 @@ func Test_leftContains_array_true(t *testing.T) {
 	r["test"] = []string{
 		"world",
 		"hello",
+	}
+	r["ignore"] = "ignore"
+
+	contains := leftContains(l, r)
+
+	if !contains {
+		t.Log("Expected array to work but failed")
+		t.Fail()
+	}
+}
+
+func Test_leftContains_number_array_true(t *testing.T) {
+	l := map[string]interface{}{}
+	l["test"] = []float32{
+		3.3,
+		3,
+	}
+
+	r := map[string]interface{}{}
+	r["test"] = []float32{
+		3.3,
+		3,
 	}
 	r["ignore"] = "ignore"
 
