@@ -15,29 +15,29 @@ import (
 )
 
 type Job struct {
-	Name     string
-	Schedule Schedule
-	Actions  []Action
+	Name     string   `yaml:"name"`
+	Schedule Schedule `yaml:"schedule"`
+	Actions  []Action `yaml:"actions"`
 }
 
 type Schedule struct {
-	Duration float32
-	Unit     string
+	Duration float32 `yaml:"duration"`
+	Unit     string  `yaml:"unit"`
 }
 
 type Action struct {
-	Request  Request
-	Response ExpectedResponse
+	Request  Request          `yaml:"request"`
+	Response ExpectedResponse `yaml:"response"`
 }
 
 type Request struct {
-	Type string
-	URL  string
+	Type string `yaml:"type"`
+	URL  string `yaml:"url"`
 }
 
 type ExpectedResponse struct {
-	StatusCode int
-	Body       *map[string]interface{}
+	StatusCode int                     `yaml:"statusCode"`
+	Body       *map[string]interface{} `yaml:"body"`
 }
 
 func ScheduleJob(job Job) {
