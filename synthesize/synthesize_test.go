@@ -1,6 +1,7 @@
 package synthesize
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -71,6 +72,48 @@ func Test_Request_Response_with_URL(t *testing.T) {
 		t.Log("Expected actions to succeed but did not")
 		t.Logf("Expected status code to be 200 but was %v", httpResp.StatusCode)
 		t.Fail()
+	}
+}
+
+func Test_ExpectedResponse_Comparison(t *testing.T) {
+	input := `{"hello": "world"}`
+
+	right := map[string]interface{}{}
+	err := json.Unmarshal([]byte(input), &right)
+
+	if err != nil {
+		t.Fatalf("Should be able to parse json but it failed")
+	}
+
+	left := map[string]interface{}{
+		"hello": "world",
+	}
+
+	contains := leftContains(left, right)
+
+	if !contains {
+		t.Fatal("Left should be contained in right")
+	}
+}
+
+func Test_ExpectedResponse_Comparison_NotEqual(t *testing.T) {
+	input := `{"hello2": "world"}`
+
+	right := map[string]interface{}{}
+	err := json.Unmarshal([]byte(input), &right)
+
+	if err != nil {
+		t.Fatalf("Should be able to parse json but it failed")
+	}
+
+	left := map[string]interface{}{
+		"hello": "world",
+	}
+
+	contains := leftContains(left, right)
+
+	if contains {
+		t.Fatal("Left should not be contained in right")
 	}
 }
 
