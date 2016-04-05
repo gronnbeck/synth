@@ -177,13 +177,13 @@ func Test_leftContains_string_array_true(t *testing.T) {
 
 func Test_leftContains_number_array_true(t *testing.T) {
 	l := map[string]interface{}{}
-	l["test"] = []float32{
+	l["test"] = []float64{
 		3.3,
 		3,
 	}
 
 	r := map[string]interface{}{}
-	r["test"] = []float32{
+	r["test"] = []float64{
 		3.3,
 		3,
 	}
