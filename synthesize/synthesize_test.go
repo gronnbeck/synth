@@ -98,6 +98,50 @@ func Test_ExpectedResponse_Comparison(t *testing.T) {
 	}
 }
 
+func Test_ExpectedResponse_Comparison_Complex(t *testing.T) {
+	input := `{"complex": {"hello": "world"}}`
+
+	right := map[string]interface{}{}
+	err := json.Unmarshal([]byte(input), &right)
+
+	if err != nil {
+		t.Fatalf("Should be able to parse json but it failed")
+	}
+
+	left := map[string]interface{}{
+		"complex": map[string]interface{}{
+			"hello": "world",
+		},
+	}
+
+	contains := leftContains(left, right)
+
+	if !contains {
+		t.Fatal("Left should be contained in right")
+	}
+}
+
+func Test_ExpectedResponse_Comparison_Array(t *testing.T) {
+	input := `{"array": [1, 2, 3]}`
+
+	right := map[string]interface{}{}
+	err := json.Unmarshal([]byte(input), &right)
+
+	if err != nil {
+		t.Fatalf("Should be able to parse json but it failed")
+	}
+
+	left := map[string]interface{}{
+		"array": []interface{}{1.0, 2.0, 3.0},
+	}
+
+	contains := leftContains(left, right)
+
+	if !contains {
+		t.Fatal("Left should be contained in right")
+	}
+}
+
 func Test_ExpectedResponse_Comparison_NotEqual(t *testing.T) {
 	input := `{"hello2": "world"}`
 
