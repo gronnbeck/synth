@@ -36,6 +36,21 @@ type ExpectedResponse struct {
 	Body       *map[string]interface{}
 }
 
+func (j Job) Run() (bool, error) {
+	for _, action := range j.Actions {
+		passed, _, err := action.run()
+
+		if err != nil {
+			return false, err
+		}
+
+		if !passed {
+			return false, nil
+		}
+	}
+	return true, nil
+}
+
 func loadJobFile(filename string) (*Job, error) {
 	byt, err := ioutil.ReadFile(filename)
 	if err != nil {

@@ -53,6 +53,43 @@ func Test_Should_Load_YAML_Job(t *testing.T) {
 	}
 }
 
+func Test_JobRun_ShouldRunAllActions(t *testing.T) {
+	server1 := testTools(202, "")
+	server2 := testTools(200, `{"hello": "world"}`)
+
+	job := Job{
+		Name: "test",
+		Schedule: Schedule{
+			Duration: 3.0,
+			Unit:     "seconds",
+		},
+		Actions: []Action{
+			Action{
+				Request:  Request{URL: server1.URL},
+				Response: ExpectedResponse{StatusCode: 202},
+			},
+			Action{
+				Request: Request{URL: server2.URL},
+				Response: ExpectedResponse{
+					StatusCode: 200,
+					Body:       &map[string]interface{}{"hello": "world"},
+				},
+			},
+		},
+	}
+
+	success, err := job.Run()
+
+	if err != nil {
+		t.Log(err)
+		t.Fatal("An error occured with the job")
+	}
+
+	if !success {
+		t.Fatal("Job did not complete as expected")
+	}
+}
+
 func Test_Request_Response_with_URL(t *testing.T) {
 	server := testTools(200, "")
 
