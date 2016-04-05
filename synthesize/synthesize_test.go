@@ -163,6 +163,49 @@ func Test_ExpectedResponse_Comparison_NotEqual(t *testing.T) {
 	}
 }
 
+func Test_YAML_ExpectedResponse_Comparison(t *testing.T) {
+	spec := `
+  name: Test
+  schedule:
+    duration: 5
+    unit: seconds
+  actions:
+    - request:
+        type: GET
+      response:
+        statusCode: 200
+        body:
+          hello: world
+          world:
+            - 1.0
+            - 2.0
+            - 3.0
+  `
+
+	job, err := loadJobYaml([]byte(spec))
+
+	if err != nil {
+		t.Fail()
+	}
+
+	input := `{"hello": "world", "world": [1, 2, 3]}`
+	actual := map[string]interface{}{}
+	err = json.Unmarshal([]byte(input), &actual)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	exp := job.Actions[0].Response
+
+	contains := leftContains(*exp.Body, actual)
+
+	if !contains {
+		t.Fatal("Parsing YAML does not give us the expected request we wanted")
+	}
+
+}
+
 func testTools(code int, body string) *httptest.Server {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(code)
