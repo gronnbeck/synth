@@ -8,19 +8,19 @@ import (
 	"testing"
 )
 
-var jobYAML = `
-name: Test
-schedule:
-  duration: 5
-  unit: seconds
-actions:
-  - request:
-      type: GET
-    response:
-      statusCode: 200
-`
-
 func Test_Should_Load_YAML_Job(t *testing.T) {
+
+	var jobYAML = `
+  name: Test
+  schedule:
+    duration: 5
+    unit: seconds
+  actions:
+    - request:
+        type: GET
+      response:
+        statusCode: 200
+  `
 
 	job, err := loadJobYaml([]byte(jobYAML))
 
