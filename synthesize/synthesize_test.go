@@ -76,7 +76,7 @@ func Test_Request_Response_with_URL(t *testing.T) {
 }
 
 func Test_ExpectedResponse_Comparison(t *testing.T) {
-	input := `{"hello": "world"}`
+	input := `{"hello": "world", "integer": 4, "float": 3.5}`
 
 	right := map[string]interface{}{}
 	err := json.Unmarshal([]byte(input), &right)
@@ -86,7 +86,9 @@ func Test_ExpectedResponse_Comparison(t *testing.T) {
 	}
 
 	left := map[string]interface{}{
-		"hello": "world",
+		"hello":   "world",
+		"integer": 4.0,
+		"float":   3.5,
 	}
 
 	contains := leftContains(left, right)
