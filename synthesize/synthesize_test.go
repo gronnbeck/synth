@@ -162,8 +162,8 @@ func Test_leftContains_string_array_true(t *testing.T) {
 
 	r := map[string]interface{}{}
 	r["test"] = []string{
-		"world",
 		"hello",
+		"world",
 	}
 	r["ignore"] = "ignore"
 

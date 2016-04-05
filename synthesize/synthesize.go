@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"reflect"
-	"sort"
 
 	"gopkg.in/yaml.v2"
 )
@@ -111,8 +110,6 @@ func leftContains(left map[string]interface{}, right map[string]interface{}) boo
 }
 
 func testEqString(a, b []string) bool {
-	sort.Strings(a)
-	sort.Strings(b)
 	if a == nil && b == nil {
 		return true
 	}
@@ -135,8 +132,6 @@ func testEqString(a, b []string) bool {
 }
 
 func testEqNumber(a, b []float64) bool {
-	sort.Float64s(a)
-	sort.Float64s(b)
 	if a == nil && b == nil {
 		return true
 	}
