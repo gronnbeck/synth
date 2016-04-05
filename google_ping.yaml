@@ -1,0 +1,7 @@
+ name: Google Pinger
+ actions:
+   - request:
+       type: GET
+       url: https://google.com
+     response:
+       statusCode: 200

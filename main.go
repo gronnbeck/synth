@@ -13,19 +13,7 @@ func main() {
 
 	events := make(chan synth.Event)
 
-	synthesizeJob := synthesize.Job{
-		Name: "Google Pinger",
-		Actions: []synthesize.Action{
-			synthesize.Action{
-				Request: synthesize.Request{
-					URL: "https://google.com",
-				},
-				Response: synthesize.ExpectedResponse{
-					StatusCode: 200,
-				},
-			},
-		},
-	}
+	synthesizeJob, _ := synthesize.LoadJobFromFile("./google_ping.yaml")
 
 	schedule := synth.Schedule{
 		Jobs: []synth.JobSchedule{
