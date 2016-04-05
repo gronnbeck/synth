@@ -12,24 +12,22 @@ import (
 type PingURL struct {
 	url         string
 	application string
-	events      chan synth.Event
 }
 
 // NewPingURL returns a PingURL struct
-func NewPingURL(url string, application string, events chan synth.Event) PingURL {
+func NewPingURL(url string, application string) PingURL {
 	return PingURL{
 		url:         url,
 		application: application,
-		events:      events,
 	}
 }
 
 // Run starts the PingURL job
-func (p PingURL) Run() error {
+func (p PingURL) Run() ([]synth.Event, error) {
 	resp, err := http.Get(p.url)
 
 	if err != nil {
-		p.events <- synth.Event{
+		errorEvent := synth.Event{
 			ID:          "ping-url-unexpected-error",
 			Type:        synth.ErrorType,
 			Title:       "Unexpected error",
@@ -37,11 +35,11 @@ func (p PingURL) Run() error {
 			Message:     "PingURL on " + p.url + " failed unexpectedly.",
 			Tags:        []string{"ping-url"},
 		}
-		return err
+		return []synth.Event{errorEvent}, err
 	}
 
 	if resp.StatusCode != 200 {
-		p.events <- synth.Event{
+		failEvent := synth.Event{
 			ID:          "ping-url-unexpected-status-code",
 			Type:        synth.ErrorType,
 			Title:       "Unexpected response code",
@@ -50,10 +48,10 @@ func (p PingURL) Run() error {
 				resp.StatusCode),
 			Tags: []string{"ping-url", "status-code"},
 		}
-		return nil
+		return []synth.Event{failEvent}, nil
 	}
 
-	p.events <- synth.Event{
+	okEvent := synth.Event{
 		ID:          "ping-url-ok",
 		Type:        synth.OKType,
 		Title:       "Everything went as expected",
@@ -61,5 +59,5 @@ func (p PingURL) Run() error {
 		Message:     "Everything is OK. Nothing to report",
 		Tags:        []string{"ping-url"},
 	}
-	return nil
+	return []synth.Event{okEvent}, nil
 }

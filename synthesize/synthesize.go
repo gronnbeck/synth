@@ -3,9 +3,13 @@ package synthesize
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"reflect"
+
+	"github.com/gronnbeck/synthetic-2/synth"
 
 	"gopkg.in/yaml.v2"
 )
@@ -36,28 +40,47 @@ type ExpectedResponse struct {
 	Body       *map[string]interface{}
 }
 
-func (j Job) Run() (bool, error) {
+func ScheduleJob(job Job) {
+
+}
+
+func (j Job) Run() ([]synth.Event, error) {
+	fmt.Println("running job")
 	for _, action := range j.Actions {
-		passed, _, err := action.run()
+		passed, resp, err := action.run()
 
 		if err != nil {
-			return false, err
+			errEvent := synth.Event{
+				Application: j.Name,
+				Type:        synth.ErrorType,
+			}
+			return []synth.Event{errEvent}, err
 		}
 
 		if !passed {
-			return false, nil
+			failEvent := synth.Event{
+				Application: j.Name,
+				Type:        "fail",
+			}
+			log.Println(resp.StatusCode)
+			return []synth.Event{failEvent}, nil
 		}
 	}
-	return true, nil
+
+	okEvent := synth.Event{
+		Application: j.Name,
+		Type:        synth.OKType,
+	}
+	return []synth.Event{okEvent}, nil
 }
 
-func loadJobFile(filename string) (*Job, error) {
+func LoadJobFromFile(filename string) (*Job, error) {
 	byt, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
 
-	job, err := loadJobYaml(byt)
+	job, err := LoadJobYAML(byt)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +88,7 @@ func loadJobFile(filename string) (*Job, error) {
 	return job, nil
 }
 
-func loadJobYaml(byt []byte) (*Job, error) {
+func LoadJobYAML(byt []byte) (*Job, error) {
 	job := Job{}
 	err := yaml.Unmarshal(byt, &job)
 	if err != nil {

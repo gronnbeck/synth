@@ -22,7 +22,7 @@ func Test_Should_Load_YAML_Job(t *testing.T) {
         statusCode: 200
   `
 
-	job, err := loadJobYaml([]byte(jobYAML))
+	job, err := LoadJobYAML([]byte(jobYAML))
 
 	if err != nil {
 		t.Log("Parsing should not fail with correct yaml")
@@ -46,10 +46,12 @@ func Test_Should_Load_YAML_Job(t *testing.T) {
 
 	if job.Actions[0].Request.Type != "GET" {
 		t.Logf("Expected request type to be GET but was %v", job.Actions[0].Request.Type)
+		t.Fail()
 	}
 
 	if job.Actions[0].Response.StatusCode != 200 {
-		t.Logf("Expected request type to be GET but was %v", job.Actions[0].Response.StatusCode)
+		t.Logf("Expected request type to be 200 but was %v", job.Actions[0].Response.StatusCode)
+		t.Fail()
 	}
 }
 
@@ -78,15 +80,11 @@ func Test_JobRun_ShouldRunAllActions(t *testing.T) {
 		},
 	}
 
-	success, err := job.Run()
+	_, err := job.Run()
 
 	if err != nil {
 		t.Log(err)
 		t.Fatal("An error occured with the job")
-	}
-
-	if !success {
-		t.Fatal("Job did not complete as expected")
 	}
 }
 
@@ -244,7 +242,7 @@ func Test_YAML_ExpectedResponse_Comparison(t *testing.T) {
             - 3.0
   `
 
-	job, err := loadJobYaml([]byte(spec))
+	job, err := LoadJobYAML([]byte(spec))
 
 	if err != nil {
 		t.Fail()
