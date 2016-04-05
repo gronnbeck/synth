@@ -1,6 +1,8 @@
 package synthesize
 
 import (
+	"bytes"
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"reflect"
@@ -67,6 +69,24 @@ func (req Request) run() (*http.Response, error) {
 	return resp, nil
 }
 
+func (e ExpectedResponse) TestBody(byt []byte) (bool, error) {
+	if e.Body == nil {
+		return true, nil
+	}
+
+	if string(byt) == "" {
+		return leftContains(*e.Body, map[string]interface{}{}), nil
+	}
+
+	var actual map[string]interface{}
+	err := json.Unmarshal(byt, &actual)
+	if err != nil {
+		return false, err
+	}
+
+	return leftContains(*e.Body, actual), nil
+}
+
 func (a Action) run() (bool, *http.Response, error) {
 	resp, err := a.Request.run()
 	if err != nil {
@@ -74,6 +94,20 @@ func (a Action) run() (bool, *http.Response, error) {
 	}
 
 	if resp.StatusCode != a.Response.StatusCode {
+		return false, resp, nil
+	}
+
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(resp.Body)
+	resp.Body.Close()
+
+	passBodyTest, err := a.Response.TestBody(buf.Bytes())
+
+	if err != nil {
+		return false, resp, err
+	}
+
+	if !passBodyTest {
 		return false, resp, nil
 	}
 
