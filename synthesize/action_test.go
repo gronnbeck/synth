@@ -1,6 +1,12 @@
 package synthesize
 
-import "testing"
+import (
+	"bytes"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+)
 
 func Test_Request_Response_with_URL(t *testing.T) {
 	server := testTools(200, "")
@@ -47,4 +53,33 @@ func Test_Request_Response_with_Payload(t *testing.T) {
 		t.Fail()
 	}
 
+}
+
+func Test_Action_post_using_correct_http_verb(t *testing.T) {
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			t.Logf("Expected HTTP Method to be post but was %v", r.Method)
+			t.Fail()
+		}
+
+		w.WriteHeader(200)
+		w.Header().Set("Content-Type", "application/json")
+
+		buf := new(bytes.Buffer)
+		buf.ReadFrom(r.Body)
+		r.Body.Close()
+
+		fmt.Fprintln(w, string(buf.Bytes()))
+	}))
+
+	action := Action{
+		Request: Request{Type: "POST", URL: server.URL},
+		Response: ExpectedResponse{
+			StatusCode: 200,
+			Body:       &map[string]interface{}{"hello": "world"},
+		},
+	}
+
+	action.run()
 }
