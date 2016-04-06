@@ -8,6 +8,15 @@ import (
 	"testing"
 )
 
+func testTools(code int, body string) *httptest.Server {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(code)
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintln(w, body)
+	}))
+	return server
+}
+
 func Test_Should_Load_YAML_Job(t *testing.T) {
 
 	var jobYAML = `
@@ -264,15 +273,6 @@ func Test_YAML_ExpectedResponse_Comparison(t *testing.T) {
 		t.Fatal("Parsing YAML does not give us the expected request we wanted")
 	}
 
-}
-
-func testTools(code int, body string) *httptest.Server {
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(code)
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprintln(w, body)
-	}))
-	return server
 }
 
 func Test_leftContains_simple_true(t *testing.T) {
