@@ -120,7 +120,7 @@ func Test_Action_post_and_check_restored(t *testing.T) {
 		Request: Request{
 			Type: "POST",
 			URL:  server.URL,
-			Body: map[string]interface{}{"hello": "world"},
+			Body: &map[string]interface{}{"hello": "world"},
 		},
 		Response: ExpectedResponse{
 			StatusCode: 200,

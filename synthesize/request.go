@@ -7,9 +7,9 @@ import (
 )
 
 type Request struct {
-	Type string      `yaml:"type"`
-	URL  string      `yaml:"url"`
-	Body interface{} `yaml:"body"`
+	Type string                  `yaml:"type"`
+	URL  string                  `yaml:"url"`
+	Body *map[string]interface{} `yaml:"body"`
 }
 
 var client = http.DefaultClient
