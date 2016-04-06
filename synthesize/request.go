@@ -7,9 +7,10 @@ import (
 )
 
 type Request struct {
-	Type string                  `yaml:"type"`
-	URL  string                  `yaml:"url"`
-	Body *map[string]interface{} `yaml:"body"`
+	Type    string                  `yaml:"type"`
+	URL     string                  `yaml:"url"`
+	Body    *map[string]interface{} `yaml:"body"`
+	Headers *map[string]string      `yaml:"headers"`
 }
 
 var client = http.DefaultClient
@@ -24,6 +25,12 @@ func (r Request) run() (*http.Response, error) {
 
 	reader := bytes.NewReader(byt)
 	req, err := http.NewRequest(r.Type, r.URL, reader)
+
+	if r.Headers != nil {
+		for k, v := range *r.Headers {
+			req.Header.Set(k, v)
+		}
+	}
 
 	if err != nil {
 		return nil, err
